@@ -3,9 +3,8 @@ require 'fileutils'
 
 desc 'Deploy ruby app to s3+Lambda. Takes source_dir to ruby app, loads all detail from source_dir/lambda.rb.yaml.'
 task :deploy, [:source_dir] do |t, args|
-  raise 'source_dir is required' unless args.source_dir
   # load the config info
-  source_dir = args.source_dir
+  source_dir = default_source_dir(args.source_dir)
   config = YAML.load_file(File.join(source_dir, 'lambda.rb.yaml'))
   # make it easier to access these
   config.instance_eval do
@@ -18,7 +17,7 @@ task :deploy, [:source_dir] do |t, args|
   aws_s3_key = File.join(config.aws_subdir, zip_filename)
   travelling_ruby_filename = "traveling-ruby-#{config.travelling_ruby_version}-#{config.travelling_ruby_os}.tar.gz"
 
-  puts "Creating the build"
+  puts "Creating the build from #{source_dir}"
   # Clean build dir
   FileUtils::rm_rf('build')
   FileUtils::mkdir_p('build')
@@ -76,6 +75,18 @@ task :deploy, [:source_dir] do |t, args|
   puts "\nDone!"
 end
 
+# helper methods
 def execute(cmd)
   raise "Failed to execute #{cmd}" if !system(cmd)
+end
+
+def default_source_dir(source_dir)
+  last_source_dir_filename = '.last_source_dir'
+  if source_dir.nil? && File.exists?(last_source_dir_filename)
+    puts "Loading source_dir from #{last_source_dir_filename}"
+    source_dir = File.read(last_source_dir_filename)
+  end
+  raise 'source_dir is required' unless source_dir
+  File.write(last_source_dir_filename, source_dir)
+  source_dir
 end
