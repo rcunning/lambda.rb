@@ -10,6 +10,6 @@ travelling_ruby_os:       linux-x86_64
 # AWS details, profile name in aws cli config
 aws_profile: ryan
 # S3 Bucket where Lambda will find the Deployment Package
-aws_bucket: lamdba-deploy
+aws_bucket:  lamdba-deploy
 # The S3 subdir for deployment package zip file
-aws_subdir: lambda-functions
+aws_subdir:  lambda-functions
