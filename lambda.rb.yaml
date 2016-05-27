@@ -1,0 +1,15 @@
+
+# Your app information
+app_name:                 hello-world
+app_version:              1.0.0
+function_name:            hello-world
+# Travelling Ruby version name, and os
+travelling_ruby_version:  20150715-2.2.2
+travelling_ruby_os:       linux-x86_64
+
+# AWS details, profile name in aws cli config
+aws_profile: ryan
+# S3 Bucket where Lambda will find the Deployment Package
+aws_bucket: lamdba-deploy
+# The S3 subdir for deployment package zip file
+aws_subdir: lambda-functions
