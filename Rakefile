@@ -1,9 +1,20 @@
 require 'yaml'
 require 'fileutils'
 
+desc 'Copy template files and default lambda.rb.yaml to source_dir. Takes source_dir to ruby app.'
+task :create, [:source_dir] do |t, args|
+  source_dir = default_source_dir(args.source_dir)
+  puts "Creating #{source_dir}"
+  FileUtils::mkdir_p(source_dir)
+  puts "Copying app template to #{source_dir}/app"
+  FileUtils::cp_r('app', File.join(source_dir, 'app'))
+  puts "Creating default config file #{source_dir}/lambda.rb.yaml"
+  FileUtils::cp('lambda.rb.yaml', source_dir)
+end
+
 desc 'Deploy ruby app to s3+Lambda. Takes source_dir to ruby app, loads all detail from source_dir/lambda.rb.yaml.'
 task :deploy, [:source_dir] do |t, args|
-  # load the config info
+  # load the config info a hash
   source_dir = default_source_dir(args.source_dir)
   config = YAML.load_file(File.join(source_dir, 'lambda.rb.yaml'))
   # make it easier to access these
