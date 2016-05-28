@@ -6,8 +6,12 @@ class Application
     @@application_class.new
   end
 
-  # default handler simly returns the event object
+  # default handler simply returns the event object
   def handler(event)
     event
+  end
+
+  def log(s)
+    $stderr.write("#{s}\n")
   end
 end
