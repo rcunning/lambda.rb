@@ -1,5 +1,6 @@
 require 'yaml'
 require 'fileutils'
+require 'open3'
 
 desc 'Copy template files and default lambda.rb.yaml to source_dir. Takes source_dir to ruby app.'
 task :create, [:source_dir] do |t, args|
@@ -7,7 +8,7 @@ task :create, [:source_dir] do |t, args|
   puts "Creating #{source_dir}"
   FileUtils::mkdir_p(source_dir)
   puts "Copying app template to #{source_dir}/app"
-  FileUtils::cp_r('app', File.join(source_dir, 'app'))
+  FileUtils::cp_r('app', source_dir + File::SEPARATOR)
   puts "Creating default config file #{source_dir}/lambda.rb.yaml"
   FileUtils::cp('lambda.rb.yaml', source_dir)
 end
@@ -84,6 +85,31 @@ task :deploy, [:source_dir] do |t, args|
   execute("aws lambda update-function-code --function-name #{config.function_name} --s3-bucket #{config.aws_bucket} --s3-key #{aws_s3_key} --profile #{config.aws_profile}")
 
   puts "\nDone!"
+end
+
+desc 'Run your app with a test input, return the output. Note, expects correct ruby is default gems are install.'
+task :test, :test_file, :source_dir do |t,args|
+  source_dir = default_source_dir(args.source_dir)
+  raise "test_file is required" unless args.test_file
+  # prefer source_dir test file, then look in local
+  test_filename = "#{args.test_file}.json"
+  test_path = File.join(source_dir, 'test', test_filename)
+  test_path = File.join('test', test_filename) unless File.exists?(test_path)
+  # read the input, launch locally
+  cmd = "cd #{source_dir} && ruby #{File.join(source_dir, 'app', 'app.rb')} #{Shellwords.escape(File.read(test_path))}"
+  Open3.popen3(cmd) do |stdin, stdout, stderr|
+    stdin.close_write
+    out = stdout.read
+    err = stderr.read
+    if err.to_s.empty?
+      puts out
+    else
+      puts "Output:"
+      puts out
+      puts "Error:"
+      puts err
+    end
+  end
 end
 
 # helper methods
