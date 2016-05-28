@@ -25,7 +25,7 @@ class AlexaApplication < Application
     @version = @event.version
     parse_session
     parse_request
-    dispatch_response
+    dispatch_response.to_json
   end
 
   def parse_session
@@ -58,5 +58,18 @@ class AlexaApplication < Application
 
   def validate_application_id(application_id)
     raise "AppID does not match #{application_id} != #{@application_id}" if application_id != @application_id
+  end
+
+  def speech_response(text)
+    {
+      'version': '1.0',
+      'response': {
+        'outputSpeech': {
+          'type': 'PlainText',
+          'text': text
+        },
+        'shouldEndSession': true
+      }
+    }
   end
 end

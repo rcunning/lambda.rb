@@ -10,7 +10,7 @@ task :create, [:source_dir] do |t, args|
   puts "Copying app template to #{source_dir}/app"
   FileUtils::cp_r('app', source_dir + File::SEPARATOR)
   puts "Creating default config file #{source_dir}/lambda.rb.yaml"
-  FileUtils::cp('lambda.rb.yaml', source_dir)
+  FileUtils::cp('lambda.rb.yaml', source_dir) if !File.exists?(File.join(source_dir, 'lambda.rb.yaml'))
 end
 
 desc 'Deploy ruby app to s3+Lambda. Takes source_dir to ruby app, loads all detail from source_dir/lambda.rb.yaml.'

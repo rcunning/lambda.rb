@@ -12,7 +12,7 @@ exports.handler = function(event, context) {
 
   child.on('close', function(code) {
     if(code === 0) {
-      context.succeed(out_data);
+      context.succeed(JSON.parse(out_data));
     } else {
       context.fail(new Error("Process exited with non-zero status code " + code));
     }
