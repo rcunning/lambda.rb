@@ -38,19 +38,11 @@ class AlexaApplication < Application
     @request = @event.request 
     @request_type = REQUEST_TYPES[@request.type]
     @request_id = @request.requestId
+    @intent = @request_type == :intent ? @request.intent.name.sub(/\./,'_') : @request_type
   end
 
   def dispatch_response
-    case @request_type
-    when :launch
-      on_launch
-    when :end
-      on_end
-    when :intent
-      self.send("on_#{@request.intent.name}")
-    else
-      raise "Unknown request type #{@request.type}"
-    end
+    send("on_#{@intent}")
   end
 
   def on_launch; end
