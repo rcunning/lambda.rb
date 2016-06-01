@@ -2,15 +2,28 @@ require 'yaml'
 require 'fileutils'
 require 'open3'
 
-desc 'Copy template files and default lambda.rb.yaml to source_dir. Takes source_dir to ruby app.'
+desc 'Copy template files and default lambda.rb.yaml to source_dir. Takes source_dir to new ruby app.'
 task :create, [:source_dir] do |t, args|
   source_dir = default_source_dir(args.source_dir)
+  if !File.exists?(File.join(source_dir, 'lambda.rb.yaml'))
+    raise 'Cannot create since project already exists. Please use update to update the non-template files.'
+  end
   puts "Creating #{source_dir}"
   FileUtils::mkdir_p(source_dir)
-  puts "Copying app template to #{source_dir}/app"
+  puts "Copying app template and classes to #{source_dir}/app"
   FileUtils::cp_r('app', source_dir + File::SEPARATOR)
   puts "Creating default config file #{source_dir}/lambda.rb.yaml"
-  FileUtils::cp('lambda.rb.yaml', source_dir) if !File.exists?(File.join(source_dir, 'lambda.rb.yaml'))
+  FileUtils::cp('lambda.rb.yaml', source_dir)
+end
+
+desc 'Update class files in source_dir. Takes source_dir to ruby app.'
+task :update, [:source_dir] do |t, args|
+  source_dir = default_source_dir(args.source_dir)
+  puts "Copying app classes to #{source_dir}/app"
+  Dir["app/**/*.rb"].each do |filename|
+    FileUtils::mkdir_p(File.dirname(File.join(source_dir, filename)))
+    FileUtils::cp(filename, File.join(source_dir, filename))
+  end
 end
 
 desc 'Deploy ruby app to s3+Lambda. Takes source_dir to ruby app, loads all detail from source_dir/lambda.rb.yaml.'
