@@ -5,7 +5,7 @@ require 'open3'
 desc 'Copy template files and default lambda.rb.yaml to source_dir. Takes source_dir to new ruby app.'
 task :create, [:source_dir] do |t, args|
   source_dir = default_source_dir(args.source_dir)
-  if !File.exists?(File.join(source_dir, 'lambda.rb.yaml'))
+  if File.exists?(File.join(source_dir, 'lambda.rb.yaml'))
     raise 'Cannot create since project already exists. Please use update to update the non-template files.'
   end
   puts "Creating #{source_dir}"
