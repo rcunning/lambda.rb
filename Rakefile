@@ -1,4 +1,5 @@
 require 'yaml'
+require 'json'
 require 'fileutils'
 require 'open3'
 
@@ -13,7 +14,9 @@ task :create, [:source_dir] do |t, args|
   puts "Copying app template and classes to #{source_dir}/app"
   FileUtils::cp_r('app', source_dir + File::SEPARATOR)
   puts "Creating default config file #{source_dir}/lambda.rb.yaml"
-  FileUtils::cp('lambda.rb.yaml', source_dir)
+  File.open(File.join(source_dir, 'lambda.rb.yaml', 'w')) do |f|
+    f.write(File.read('lambda.rb.yaml').gsub(/hello-world/, File.basename(source_dir)))
+  end
 end
 
 desc 'Update class files in source_dir. Takes source_dir to ruby app.'
@@ -101,7 +104,7 @@ task :deploy, [:source_dir] do |t, args|
 end
 
 desc 'Run your app with a test input, return the output. Note, expects correct ruby is default gems are install.'
-task :test, :test_file, :source_dir do |t,args|
+task :test, [:test_file, :source_dir] do |t,args|
   source_dir = default_source_dir(args.source_dir)
   raise "test_file is required" unless args.test_file
   # prefer source_dir test file, then look in local
@@ -121,6 +124,45 @@ task :test, :test_file, :source_dir do |t,args|
       puts out
       puts "Error:"
       puts err
+    end
+  end
+end
+
+# Alexa Skills tasks
+namespace :alexa do
+  desc 'Adds an Alexa Intent to intent_schema.json'
+  task :add_intent, [:intent, :source_dir] do |t,args|
+    source_dir = default_source_dir(args.source_dir)
+    filename = File.join(source_dir, 'app', 'alexa', 'intent_schema.json')
+    schema = JSON.parse(File.read(filename))
+    puts "Adding intent '#{args.intent}' to #{filename}"
+    schema['intents'].push({'intent' => args.intent})
+    File.open(filename, 'w') do |f|
+      f.write(JSON.pretty_generate(schema))
+    end
+  end
+
+  desc 'Adds an Alexa Sample Utterance to sample_utterances.txt'
+  task :add_utterance, [:intent, :utterance, :source_dir] do |t,args|
+    source_dir = default_source_dir(args.source_dir)
+    filename = File.join(source_dir, 'app', 'alexa', 'sample_utterances.txt')
+    samples = File.read(filename)
+    puts "Adding utterance for intent '#{args.intent}', '#{args.utterance}' to #{filename}"
+    samples += "\n#{args.intent} #{args.utterance}"
+    File.open(filename, 'w') do |f|
+      f.write(samples)
+    end
+  end
+
+  desc 'Adds an Alexa Slot to slots.yaml. Double-quote values params, single quote each value, separated by a semicolon.'
+  task :add_slot, [:slot, :values, :source_dir] do |t,args|
+    source_dir = default_source_dir(args.source_dir)
+    filename = File.join(source_dir, 'app', 'alexa', 'slots.yaml')
+    slots = YAML.load_file(filename) || []
+    puts "Adding slot '#{args.slot}' to #{filename}"
+    slots.push({args.slot => args.values.scan(/'([^']+)';? ?/).flatten})
+    File.open(filename, 'w') do |f|
+      f.write(slots.to_yaml)
     end
   end
 end
