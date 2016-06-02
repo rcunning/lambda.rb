@@ -64,4 +64,30 @@ class AlexaApplication < Application
       }
     }
   end
+
+  def mp3_response(url)
+    {
+      'version': '1.0',
+      'response': {
+        'outputSpeech': {
+          'type': 'SSML',
+          'ssml': "<speak><audio src=\"#{url}\" /></speak>"
+        },
+        'shouldEndSession': true
+      }
+    }
+  end
+
+  def ssml_response(ssml)
+    {
+      'version': '1.0',
+      'response': {
+        'outputSpeech': {
+          'type': 'SSML',
+          'ssml': ssml
+        },
+        'shouldEndSession': true
+      }
+    }
+  end
 end

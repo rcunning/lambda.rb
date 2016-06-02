@@ -1,3 +1,5 @@
 build/*
 packaging/vendor/*
 packaging/*.tar.gz
+.last_source_dir
+*.swp

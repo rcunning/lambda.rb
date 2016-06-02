@@ -14,7 +14,7 @@ task :create, [:source_dir] do |t, args|
   puts "Copying app template and classes to #{source_dir}/app"
   FileUtils::cp_r('app', source_dir + File::SEPARATOR)
   puts "Creating default config file #{source_dir}/lambda.rb.yaml"
-  File.open(File.join(source_dir, 'lambda.rb.yaml', 'w')) do |f|
+  File.open(File.join(source_dir, 'lambda.rb.yaml'), 'w') do |f|
     f.write(File.read('lambda.rb.yaml').gsub(/hello-world/, File.basename(source_dir)))
   end
 end
