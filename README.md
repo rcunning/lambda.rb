@@ -65,7 +65,7 @@ end
 5. Edit your code
   - $ vi ../new-function/app/new-function.rb
   - Start with something like the e.g. section above
-  - For Alexa be sure to [create your Alex](https://developer.amazon.com/edw/home.html#/) app and get its id
+  - For Alexa be sure to [create your Alexa](https://developer.amazon.com/edw/home.html#/) app and get its id
 6. Test your code
   - $ rake test[ping]
   - or for Alexa
