@@ -7,19 +7,19 @@
       "userId": null
     },
     "application": {
-      "applicationId": "amzn1.echo-sdk-ams.app.[unique-value-here]"
+      "applicationId": "amzn1.echo-sdk-ams.app.5aef38dd-926b-466d-8bb6-f410555a8411"
     }
   },
   "version": "1.0",
   "request": {
     "intent": {
       "slots": {
-        "Color": {
-          "name": "Color",
-          "value": "blue"
+        "freeform": {
+          "name": "freeform",
+          "value": "Test multi-word"
         }
       },
-      "name": "MyColorIsIntent"
+      "name": "OpenIntent"
     },
     "type": "IntentRequest",
     "requestId": "request5678"

@@ -112,8 +112,10 @@ task :test, [:test_file, :source_dir] do |t,args|
   test_path = File.join(source_dir, 'test', test_filename)
   test_path = File.join('test', test_filename) unless File.exists?(test_path)
   # read the input, launch locally
-  cmd = "cd #{source_dir} && ruby #{File.join(source_dir, 'app', 'app.rb')} #{Shellwords.escape(File.read(test_path))}"
+  #cmd = "cd #{source_dir} && ruby #{File.join(source_dir, 'app', 'app.rb')} #{Shellwords.escape(File.read(test_path))}"
+  cmd = "cd #{source_dir} && ruby #{File.join(source_dir, 'app', 'app.rb')}"
   Open3.popen3(cmd) do |stdin, stdout, stderr|
+    stdin.write(File.read(test_path))
     stdin.close_write
     out = stdout.read
     err = stderr.read

@@ -4,7 +4,7 @@ var invokeRubyApp = "./app";
 
 exports.handler = function(event, context) {
   console.log("Starting process: " + invokeRubyApp);
-  var child = spawn(invokeRubyApp, [ JSON.stringify(event) ]); //, { stdio: 'inherit' });
+  var child = spawn(invokeRubyApp);
   var out_data = '';
 
   child.stdout.on('data', function(data) { out_data += data; });
@@ -17,4 +17,6 @@ exports.handler = function(event, context) {
       context.fail(new Error("Process exited with non-zero status code " + code));
     }
   });
+
+  child.stdin.end(JSON.stringify(event));
 }
