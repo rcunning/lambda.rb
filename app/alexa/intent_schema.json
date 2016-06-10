@@ -1,7 +1,0 @@
-{
-  "intents": [
-    {
-      "intent": "AMAZON.HelpIntent"
-    }
-  ]
-}

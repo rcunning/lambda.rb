@@ -7,19 +7,19 @@
       "userId": null
     },
     "application": {
-      "applicationId": "amzn1.echo-sdk-ams.app.5aef38dd-926b-466d-8bb6-f410555a8411"
+      "applicationId": "amzn1.echo-sdk-ams.app.[unique-value-here]"
     }
   },
   "version": "1.0",
   "request": {
     "intent": {
       "slots": {
-        "freeform": {
-          "name": "freeform",
-          "value": "Test multi-word"
+        "myslot": {
+          "name": "myslot",
+          "value": "This is the slot value"
         }
       },
-      "name": "OpenIntent"
+      "name": "Intent"
     },
     "type": "IntentRequest",
     "requestId": "request5678"

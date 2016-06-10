@@ -130,45 +130,6 @@ task :test, [:test_file, :source_dir] do |t,args|
   end
 end
 
-# Alexa Skills tasks
-namespace :alexa do
-  desc 'Adds an Alexa Intent to intent_schema.json'
-  task :add_intent, [:intent, :source_dir] do |t,args|
-    source_dir = default_source_dir(args.source_dir)
-    filename = File.join(source_dir, 'app', 'alexa', 'intent_schema.json')
-    schema = JSON.parse(File.read(filename))
-    puts "Adding intent '#{args.intent}' to #{filename}"
-    schema['intents'].push({'intent' => args.intent})
-    File.open(filename, 'w') do |f|
-      f.write(JSON.pretty_generate(schema))
-    end
-  end
-
-  desc 'Adds an Alexa Sample Utterance to sample_utterances.txt'
-  task :add_utterance, [:intent, :utterance, :source_dir] do |t,args|
-    source_dir = default_source_dir(args.source_dir)
-    filename = File.join(source_dir, 'app', 'alexa', 'sample_utterances.txt')
-    samples = File.read(filename)
-    puts "Adding utterance for intent '#{args.intent}', '#{args.utterance}' to #{filename}"
-    samples += "\n#{args.intent} #{args.utterance}"
-    File.open(filename, 'w') do |f|
-      f.write(samples)
-    end
-  end
-
-  desc 'Adds an Alexa Slot to slots.yaml. Double-quote values params, single quote each value, separated by a semicolon.'
-  task :add_slot, [:slot, :values, :source_dir] do |t,args|
-    source_dir = default_source_dir(args.source_dir)
-    filename = File.join(source_dir, 'app', 'alexa', 'slots.yaml')
-    slots = YAML.load_file(filename) || []
-    puts "Adding slot '#{args.slot}' to #{filename}"
-    slots.push({args.slot => args.values.scan(/'([^']+)';? ?/).flatten})
-    File.open(filename, 'w') do |f|
-      f.write(slots.to_yaml)
-    end
-  end
-end
-
 # helper methods
 def execute(cmd)
   raise "Failed to execute #{cmd}" if !system(cmd)
