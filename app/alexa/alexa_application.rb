@@ -94,25 +94,56 @@ class AlexaResponse
   end
 
   # quick helpers
-  def speak_text(text)
-    build_response(:text => text)
+  def speak_text(text, options = {})
+    build_response(options.merge({:text => text}))
     self
   end
-  def speak_ssml(ssml)
-    build_response(:ssml => ssml)
+  def speak_ssml(ssml, options = {})
+    build_response(options.merge({:ssml => ssml}))
     self
   end
-  def play_mp3(url)
-    build_response(:ssml => "<speak><audio src=\"#{url}\" /></speak>")
+  def play_mp3(url, options = {})
+    build_response(options.merge({:ssml => "<speak><audio src=\"#{url}\" /></speak>"}))
     self
   end
-  def ask_text(text, reprompt)
-    build_response(:text => text, :reprompt => reprompt)
-    self
+
+  def speak_text_with_card(text, card, options = {})
+    speak_text(text, options.merge({:card => card}))
   end
-  def ask_ssml(ssml, reprompt)
-    build_response(:ssml => ssml, :reprompt => reprompt)
-    self
+  def speak_ssml_with_card(ssml, card, options = {})
+    speak_ssml(ssml, options.merge({:card => card}))
+  end
+  def play_mp3_with_card(ssml, card, options = {})
+    speak_ssml(ssml, options.merge({:card => card}))
+  end
+
+  def ask_text(text, reprompt, options = {})
+    speak_text(text, options.merge({:reprompt => reprompt}))
+  end
+  def ask_ssml(ssml, reprompt, options = {})
+    speak_ssml(ssml, options.merge({:reprompt => reprompt}))
+  end
+  def ask_mp3(ssml, reprompt, options = {})
+    speak_ssml(ssml, options.merge({:reprompt => reprompt}))
+  end
+
+  def ask_text_with_card(text, reprompt, card, options = {})
+    speak_text(text, options.merge({:reprompt => reprompt, :card => card}))
+  end
+  def ask_ssml_with_card(ssml, reprompt, card, options = {})
+    speak_ssml(ssml, options.merge({:reprompt => reprompt, :card => card}))
+  end
+  def ask_mp3_with_card(ssml, reprompt, card, options = {})
+    speak_ssml(ssml, options.merge({:reprompt => reprompt, :card => card}))
+  end
+
+  # use these to build the options for reprompt args or card args
+  def speech_options(text, ssml = nil)
+    text ? { :text=>text } : { :ssml=>ssml }
+  end
+
+  def card_options(card_type, card_title, card_content)
+    { :card_type => card_type, :card_title => card_title, :card_content => card_content }
   end
 
   # details
@@ -168,11 +199,20 @@ class AlexaResponse
   end
 
   def card(options)
-    # ????
-    {
-      'type': 'Simple',
+    card = {
+      'type': ptions[:card_type] || 'Simple',
       'title': options[:card_title] || 'Card Title',
-      'content': options[:card_content] || 'Card Content'
+      'content': options[:card_content] || 'Card Contents'
     }
+    if options[:image_small] && options[:image_large]
+      card.merge!({
+        'type' => 'Standard',
+        'image' => {
+          'smallImageUrl' => options[:image_small],
+          'largeImageUrl' => options[:image_large],
+        }
+      })
+    end
+    card
   end
 end
