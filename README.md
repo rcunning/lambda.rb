@@ -39,6 +39,16 @@ class HelloWorldAlexa < AlexaApplication
   def on_SomeIntent(response)
     response.speak_text("I got this in myslot #{@request.intent.slots.myslot.value}")
   end
+
+  def on_SomeOtherIntent(response)
+    response.play_mp3('http://myhost.com/ding_dong.mp3')
+  end
+
+  def on_SomeOtherMoreComplicatedIntent(response)
+    response.speak_text("Very nice!")
+      .with_card(AlexaResponse.card_options('My App Card Title', 'May App Card Contents'))
+      .with_reprompt(AlexaResponse.speech_options('What do you want to do next?'))
+  end
 end
 ```
 

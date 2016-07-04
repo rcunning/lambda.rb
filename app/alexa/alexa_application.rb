@@ -94,56 +94,43 @@ class AlexaResponse
   end
 
   # quick helpers
-  def speak_text(text, options = {})
-    build_response(options.merge({:text => text}))
+  def speak_text(text)
+    build_response(self.class.speech_options(text))
     self
   end
-  def speak_ssml(ssml, options = {})
-    build_response(options.merge({:ssml => ssml}))
+  def speak_ssml(ssml)
+    build_response(self.class.speech_options(nil, ssml))
     self
   end
-  def play_mp3(url, options = {})
-    build_response(options.merge({:ssml => "<speak><audio src=\"#{url}\" /></speak>"}))
+  def play_mp3(url)
+    build_response(self.class.mp3_options(url))
     self
   end
 
-  def speak_text_with_card(text, card, options = {})
-    speak_text(text, options.merge({:card => card}))
-  end
-  def speak_ssml_with_card(ssml, card, options = {})
-    speak_ssml(ssml, options.merge({:card => card}))
-  end
-  def play_mp3_with_card(ssml, card, options = {})
-    speak_ssml(ssml, options.merge({:card => card}))
+  def with_card(card)
+    add_card({:card => card})
+    self
   end
 
-  def ask_text(text, reprompt, options = {})
-    speak_text(text, options.merge({:reprompt => reprompt}))
-  end
-  def ask_ssml(ssml, reprompt, options = {})
-    speak_ssml(ssml, options.merge({:reprompt => reprompt}))
-  end
-  def ask_mp3(ssml, reprompt, options = {})
-    speak_ssml(ssml, options.merge({:reprompt => reprompt}))
+  def with_reprompt(reprompt)
+    add_reprompt({:reprompt => reprompt})
+    self
   end
 
-  def ask_text_with_card(text, reprompt, card, options = {})
-    speak_text(text, options.merge({:reprompt => reprompt, :card => card}))
-  end
-  def ask_ssml_with_card(ssml, reprompt, card, options = {})
-    speak_ssml(ssml, options.merge({:reprompt => reprompt, :card => card}))
-  end
-  def ask_mp3_with_card(ssml, reprompt, card, options = {})
-    speak_ssml(ssml, options.merge({:reprompt => reprompt, :card => card}))
-  end
-
-  # use these to build the options for reprompt args or card args
-  def speech_options(text, ssml = nil)
+  # use these to build the options for reprompt arg or card arg
+  def self.speech_options(text, ssml = nil)
     text ? { :text=>text } : { :ssml=>ssml }
   end
 
-  def card_options(card_type, card_title, card_content)
-    { :card_type => card_type, :card_title => card_title, :card_content => card_content }
+  def self.mp3_options(url)
+    {:ssml => "<speak><audio src=\"#{url}\" /></speak>"}
+  end
+
+  def self.card_options(card_title, card_content, image_small = nil, image_large = nil)
+    { :card_title => card_title,
+      :card_content => card_content,
+      :image_small =>  image_small,
+      :image_large => image_large }
   end
 
   # details
@@ -168,12 +155,12 @@ class AlexaResponse
   end
 
   def add_output(options)
-    @response['response']['outputSpeech'] = speech(options)
+    @response['response']['outputSpeech'] = self.class.speech(options)
   end
 
   def add_card(options)
     if options[:card]
-      @response['response']['card'] = card(options)
+      @response['response']['card'] = self.class.card(options)
     end
   end
 
@@ -184,7 +171,7 @@ class AlexaResponse
     end
   end
 
-  def speech(options)
+  def self.speech(options)
     if options[:ssml]
       {
         'type': 'SSML',
@@ -198,7 +185,7 @@ class AlexaResponse
     end
   end
 
-  def card(options)
+  def self.card(options)
     card = {
       'type': ptions[:card_type] || 'Simple',
       'title': options[:card_title] || 'Card Title',
