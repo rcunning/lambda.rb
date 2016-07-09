@@ -82,10 +82,9 @@ task :deploy, [:source_dir] do |t, args|
   FileUtils::cp(Dir.glob(File.join(source_dir, 'app', 'Gemfile*')), File.join(lib_dir, 'vendor'))
   FileUtils::mkdir(File.join(lib_dir, 'vendor', '.bundle'))
   FileUtils::cp(File.join('packaging', 'bundler-config'), File.join(lib_dir, 'vendor', '.bundle', 'config'))
-  FileUtils::cp(File.join('packaging', 'wrapper.sh'), File.join(package_dir, 'app'))
 
   puts "\nZipping for Lambda"
-  # Add Lambda wrapper and zip it all up for deploy
+  # zip it all up for deploy
   FileUtils::cp('index.js', package_dir)
   execute("cd #{package_dir} && find . | zip \"#{File.join('..', zip_filename)}\" -@")
   zip_path = File.join('build', zip_filename)

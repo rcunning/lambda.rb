@@ -1,8 +1,16 @@
 var spawn = require('child_process').spawn;
 
 exports.handler = function(event, context) {
+  // setup paths and env
+  var bin = __dirname + '/lib/ruby/bin/ruby';
+  var app = __dirname + '/lib/app/app.rb';
+  var options = { env:
+    { 'BUNDLE_GEMFILE': __dirname + '/lib/vendor/Gemfile',
+      'BUNDLE_IGNORE_CONFIG': null }
+  };
+
   // launch the child process
-  var child = spawn("./app");
+  var child = spawn(bin, [app], options);
   var out_data = '';
 
   // collect all output in chunks

@@ -89,4 +89,4 @@ lambda.rb keeps the last used directory as its working target. See the other opt
 ## Notes
 
 - started with https://github.com/lorennorman/ruby-on-lambda
-- execution time is way slower than JS or python on AWS Lambda
+- execution time is about 200 ms slower per request than JS or python on AWS Lambda
