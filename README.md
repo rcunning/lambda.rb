@@ -9,7 +9,6 @@
 
 - hello-world
 ```ruby
-require 'json'
 require File.join(File.dirname(__FILE__), 'application.rb')
 
 class HelloWorld < Application
