@@ -24,7 +24,6 @@ end
 
 - hello-world-alexa
 ```ruby
-require 'json'
 require File.join(File.dirname(__FILE__), 'application.rb')
 require File.join(File.dirname(__FILE__), 'alexa', 'alexa_application.rb')
 
