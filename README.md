@@ -60,29 +60,29 @@ end
   - Install the aws cli tools
   - Set up an AWS profile in `~/.aws/credentials` for the account created above
 2. Create your project
-  - $ git clone git@github.com:rcunning/lambda.rb.git
-  - $ cd lambda.rb
-  - $ rake create[../new-function]
+  - `$ git clone git@github.com:rcunning/lambda.rb.git`
+  - `$ cd lambda.rb`
+  - `$ rake create[../new-function]`
 3. Add your credentials and AWS settings
-  - Edit ../new-function/lambda.rb.yaml
+  - Edit `../new-function/lambda.rb.yaml`
   - Make sure to replace your aws_profile name, aws_bucket, aws_subdir
 4. Create your AWS Lambda function in the [AWS console](https://console.aws.amazon.com/lambda/home)
   - Make sure to name it to match new-function
   - Make sure to choose Node 4.3, at least 512 MB memory, at least 10 seconds timeout
   - If creating an Alexa Skill, use the Alexa JS sample when creating it
 5. Edit your code
-  - $ vi ../new-function/app/new-function.rb
+  - `$ vi ../new-function/app/new-function.rb`
   - Start with something like the e.g. section above
   - For Alexa be sure to [create your Alexa](https://developer.amazon.com/edw/home.html#/) app and get its id
 6. Test your code
-  - $ rake test[ping]
+  - `$ rake test[ping]`
   - or for Alexa
-  - $ rake test[alexa/launch]
+  - `$ rake test[alexa/launch]`
 7. Deploy your code
-  - $ rake deploy
+  - `$ rake deploy`
 
 lambda.rb keeps the last used directory as its working target. See the other options
-  - $ rake -T
+  - `$ rake -T`
 
 ## Notes
 
