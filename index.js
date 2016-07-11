@@ -21,7 +21,7 @@ exports.handler = function(event, context) {
   // log errors
   child.stderr.on('data', function(data) {
     if (data !== null) {
-      console.log("stderr:\n" + data);
+      console.log(data);
     }
   });
   // complete the lambda handler on close

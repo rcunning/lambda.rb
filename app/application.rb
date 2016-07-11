@@ -12,6 +12,6 @@ class Application
   end
 
   def log(s)
-    $stderr.write("#{s}\n")
+    $stderr.write(s)
   end
 end
