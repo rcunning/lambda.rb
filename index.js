@@ -4,10 +4,9 @@ exports.handler = function(event, context) {
   // setup paths and env
   var bin = __dirname + '/lib/ruby/bin/ruby';
   var app = __dirname + '/lib/app/app.rb';
-  var options = { env:
-    { 'BUNDLE_GEMFILE': __dirname + '/lib/vendor/Gemfile',
-      'BUNDLE_IGNORE_CONFIG': null }
-  };
+  process.env.BUNDLE_GEMFILE = __dirname + '/lib/vendor/Gemfile';
+  process.env.BUNDLE_IGNORE_CONFIG = null;
+  var options = { env: process.env };
 
   // launch the child process
   var child = spawn(bin, [app], options);
