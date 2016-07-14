@@ -16,7 +16,7 @@ class HelloWorld < Application
 
   def handler(event)
     @event = JSON.parse(event)
-    "Got this event - #{@event.to_json}"
+    "Got this event - #{@event.to_json}".to_json
   end
 end
 ```
