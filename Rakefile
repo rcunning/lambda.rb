@@ -52,6 +52,8 @@ task :deploy, [:source_dir] do |t, args|
   # Create package dir skeleton
   package_dir = "build/#{config.app_name}-#{config.app_version}-#{config.travelling_ruby_os}"
   lib_dir = "#{package_dir}/lib"
+  # make sure it is empty
+  FileUtils::rm_rf(package_dir)
   FileUtils::mkdir_p(lib_dir)
   # Copy in the app
   FileUtils::cp_r(File.join(source_dir, 'app'), lib_dir)
@@ -111,8 +113,7 @@ task :test, [:test_file, :source_dir] do |t,args|
   test_path = File.join(source_dir, 'test', test_filename)
   test_path = File.join('test', test_filename) unless File.exists?(test_path)
   # read the input, launch locally
-  #cmd = "cd #{source_dir} && ruby #{File.join(source_dir, 'app', 'app.rb')} #{Shellwords.escape(File.read(test_path))}"
-  cmd = "cd #{source_dir} && ruby #{File.join(source_dir, 'app', 'app.rb')}"
+  cmd = "cd #{source_dir} && unset BUNDLE_IGNORE_CONFIG && BUNDLE_GEMFILE=#{File.join(source_dir, 'app', 'Gemfile')} ruby #{File.join(source_dir, 'app', 'app.rb')}"
   Open3.popen3(cmd) do |stdin, stdout, stderr|
     stdin.write(File.read(test_path))
     stdin.close_write

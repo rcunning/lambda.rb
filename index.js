@@ -4,24 +4,33 @@ exports.handler = function(event, context) {
   // setup paths and env
   var bin = __dirname + '/lib/ruby/bin/ruby';
   var app = __dirname + '/lib/app/app.rb';
-  process.env.BUNDLE_GEMFILE = __dirname + '/lib/vendor/Gemfile';
-  process.env.BUNDLE_IGNORE_CONFIG = null;
-  var options = { env: process.env };
+  var args = ['-rbundler/setup', app]
+  spawnEnv = {};
+  for (e in process.env) {
+    if (e != 'BUNDLE_IGNORE_CONFIG') {
+      spawnEnv[e] = process.env[e];
+    }
+  }
+  spawnEnv.BUNDLE_GEMFILE = __dirname + '/lib/vendor/Gemfile';
+  // be sure to include our bundled gems in the GEM_PATH as well
+  spawnEnv.GEM_PATH = process.env.GEM_PATH + ":" + __dirname + '/lib/vendor/ruby/2.2.0/gems';
+  var options = { env: spawnEnv };
 
-  // launch the child process
-  var child = spawn(bin, [app], options);
+  // cd to our dir and launch the child process
+  process.chdir(__dirname);
+  var child = spawn(bin, args, options);
   var out_data = '';
 
   // collect all output in chunks
   child.stdout.on('data', function(data) {
-    if (data !== null) {
+    if (data) {
       out_data += data;
     }
   });
   // log errors
   child.stderr.on('data', function(data) {
-    if (data !== null) {
-      console.log(data);
+    if (data) {
+      console.log(data.toString());
     }
   });
   // complete the lambda handler on close

@@ -34,7 +34,7 @@ class AlexaApplication < Application
     parse_session
     parse_request
     dispatch_session
-    dispatch_response.to_json
+    dispatch_response
   end
 
   def parse_session
@@ -48,7 +48,7 @@ class AlexaApplication < Application
   end
 
   def parse_request
-    @request = @event.request 
+    @request = @event.request
     @request_type = REQUEST_TYPES[@request.type]
     @request_id = @request.requestId
     @intent = @request_type == :intent ? @request.intent.name.sub(/\./,'_') : @request_type
