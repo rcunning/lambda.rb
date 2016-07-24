@@ -72,18 +72,23 @@ task :deploy, [:source_dir] do |t, args|
   FileUtils::mkdir_p(ruby_dir)
   execute("tar -xzf '#{traveling_ruby_path}' -C '#{ruby_dir}'")
 
-  puts "\nBundling"
-  # Copy in Bundler and gems
-  tmp_dir = File.join('packaging', 'tmp')
-  FileUtils::mkdir_p(tmp_dir)
-  FileUtils::cp(Dir.glob(File.join(source_dir, 'app','Gemfile*')), tmp_dir)
-  execute("cd #{tmp_dir} && BUNDLE_IGNORE_CONFIG=1 bundle install --path ../vendor --without development")
-  FileUtils::rm_rf(tmp_dir)
-  FileUtils::rm(Dir.glob(File.join('packaging', 'vendor', '*', '*', 'cache', '*')))
-  FileUtils::cp_r(File.join('packaging', 'vendor'), lib_dir)
-  FileUtils::cp(Dir.glob(File.join(source_dir, 'app', 'Gemfile*')), File.join(lib_dir, 'vendor'))
-  FileUtils::mkdir(File.join(lib_dir, 'vendor', '.bundle'))
-  FileUtils::cp(File.join('packaging', 'bundler-config'), File.join(lib_dir, 'vendor', '.bundle', 'config'))
+  gemfile = File.join(source_dir, 'app','Gemfile')
+  if File.exists?(gemfile)
+    puts "\nBundling"
+    # Copy in Bundler and gems
+    tmp_dir = File.join('packaging', 'tmp')
+    FileUtils::mkdir_p(tmp_dir)
+    FileUtils::cp(Dir.glob("#{gemfile}*"), tmp_dir)
+    execute("cd #{tmp_dir} && BUNDLE_IGNORE_CONFIG=1 bundle install --path ../vendor --without development")
+    FileUtils::rm_rf(tmp_dir)
+    FileUtils::rm(Dir.glob(File.join('packaging', 'vendor', '*', '*', 'cache', '*')))
+    FileUtils::cp_r(File.join('packaging', 'vendor'), lib_dir)
+    FileUtils::cp(Dir.glob(File.join(source_dir, 'app', 'Gemfile*')), File.join(lib_dir, 'vendor'))
+    FileUtils::mkdir(File.join(lib_dir, 'vendor', '.bundle'))
+    FileUtils::cp(File.join('packaging', 'bundler-config'), File.join(lib_dir, 'vendor', '.bundle', 'config'))
+  else
+    puts "No Gemfile, skipping bundle install"
+  end
 
   puts "\nZipping for Lambda"
   # zip it all up for deploy
