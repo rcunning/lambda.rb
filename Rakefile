@@ -17,6 +17,8 @@ task :create, [:source_dir] do |t, args|
   File.open(File.join(source_dir, 'lambda.rb.yaml'), 'w') do |f|
     f.write(File.read('lambda.rb.yaml').gsub(/hello-world/, File.basename(source_dir)))
   end
+  puts "Copying index.js lambda handler"
+  FileUtils::cp('index.js', File.join(source_dir, 'index.js'))
 end
 
 desc 'Update class files in source_dir. Takes source_dir to ruby app.'
@@ -27,6 +29,8 @@ task :update, [:source_dir] do |t, args|
     FileUtils::mkdir_p(File.dirname(File.join(source_dir, filename)))
     FileUtils::cp(filename, File.join(source_dir, filename))
   end
+  puts "Copying index.js lambda handler"
+  FileUtils::cp('index.js', File.join(source_dir, 'index.js'))
 end
 
 desc 'Deploy ruby app to s3+Lambda. Takes source_dir to ruby app, loads all detail from source_dir/lambda.rb.yaml.'
@@ -92,7 +96,7 @@ task :deploy, [:source_dir] do |t, args|
 
   puts "\nZipping for Lambda"
   # zip it all up for deploy
-  FileUtils::cp('index.js', package_dir)
+  FileUtils::cp(File.join(source_dir, 'index.js'), package_dir)
   execute("cd #{package_dir} && find . | zip \"#{File.join('..', zip_filename)}\" -@")
   zip_path = File.join('build', zip_filename)
 
