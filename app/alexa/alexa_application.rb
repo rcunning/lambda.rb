@@ -187,7 +187,7 @@ class AlexaResponse
 
   def self.card(options)
     card = {
-      'type': ptions[:card_type] || 'Simple',
+      'type': options[:card_type] || 'Simple',
       'title': options[:card_title] || 'Card Title',
       'content': options[:card_content] || 'Card Contents'
     }
