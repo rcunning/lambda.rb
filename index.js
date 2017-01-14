@@ -4,7 +4,7 @@ exports.handler = function(event, context) {
   // setup paths and env
   var bin = __dirname + '/lib/ruby/bin/ruby';
   var app = __dirname + '/lib/app/app.rb';
-  var args = [app];
+  var args = ['-rbundler/setup', app];
   spawnEnv = {};
   for (e in process.env) {
     if (e != 'BUNDLE_IGNORE_CONFIG') {
