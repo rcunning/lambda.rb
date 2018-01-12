@@ -75,7 +75,7 @@ class AlexaApplication < Application
   end
 
   def validate_application_id
-    raise "AppID does not match #{@application_id} != #{@@application_id}" if @application_id != @@application_id
+    raise "AppID #{@application_id} does not match" if @application_id != @@application_id
   end
 end
 
